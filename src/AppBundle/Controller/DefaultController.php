@@ -13,9 +13,66 @@ class DefaultController extends Controller
      */
     public function indexAction(Request $request)
     {
-        // replace this example code with whatever you need
-        return $this->render('default/index.html.twig', [
-            'base_dir' => realpath($this->getParameter('kernel.project_dir')).DIRECTORY_SEPARATOR,
-        ]);
+        $echostr = $request->get('echostr');
+
+        if ($echostr) {
+            if ($this->checkSignature($request)) {
+                echo $echostr;
+                exit;
+            }
+        } else {
+            $this->responseMsg();
+        }
+    }
+
+    private function checkSignature(Request $request)
+    {
+        $signature = $request->get('signature');
+        $timestamp = $request->get('timestamp');
+        $nonce = $request->get('nonce');
+
+        $token = $this->getParameter('token');
+        $tmpArr = [
+            $token, $timestamp, $nonce
+        ];
+        sort($tmpArr);
+        $temStr = implode($tmpArr);
+        $tmpStr = sha1($temStr);
+
+        if ($tmpStr == $signature) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private function responseMsg()
+    {
+        $postStr = file_get_contents("php://input");
+        if (!empty($postStr)) {
+            $postObj = simplexml_load_string($postStr, 'SimpleXMLElement', LIBXML_NOCDATA);
+            $fromUsername = $postObj->FromUserName;
+            $toUserName = $postObj->ToUserName;
+            $keyword = trim($postObj->Content);
+            $time = time();
+            $textTpl = "<xml>
+                            <ToUserName><![CDATA[%s]]></ToUserName>
+                            <FromUserName><![CDATA[%s]]></FromUserName>
+                            <CreateTime>%s</CreateTime>
+                            <MsgType><![CDATA[%s]]></MsgType>
+                            <Content><![CDATA[%s]]></Content>
+                            <MsgId>0</MsgId>
+                        </xml>
+";
+            if ($keyword) {
+                $msgType = "text";
+                $content = date("Y-m-d H:i:s", time());
+                $result = sprintf($textTpl, $fromUsername, $toUserName, $time, $msgType, $content);
+                echo $result;
+            }
+        } else {
+            echo "";
+            exit;
+        }
     }
 }
