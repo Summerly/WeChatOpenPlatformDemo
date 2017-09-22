@@ -5,6 +5,7 @@ namespace AppBundle\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class DefaultController extends Controller
 {
@@ -17,11 +18,10 @@ class DefaultController extends Controller
 
         if ($echostr) {
             if ($this->checkSignature($request)) {
-                echo $echostr;
-                exit;
+                return new Response($echostr);
             }
         } else {
-            $this->responseMsg();
+            return $this->responseMsg();
         }
     }
 
@@ -41,14 +41,15 @@ class DefaultController extends Controller
 
         if ($tmpStr == $signature) {
             return true;
-        } else {
-            return false;
         }
+
+        return false;
     }
 
     private function responseMsg()
     {
         $postStr = file_get_contents("php://input");
+
         if (!empty($postStr)) {
             $postObj = simplexml_load_string($postStr, 'SimpleXMLElement', LIBXML_NOCDATA);
             $fromUsername = $postObj->FromUserName;
@@ -68,11 +69,11 @@ class DefaultController extends Controller
                 $msgType = "text";
                 $content = date("Y-m-d H:i:s", time());
                 $result = sprintf($textTpl, $fromUsername, $toUserName, $time, $msgType, $content);
-                echo $result;
+
+                return new Response($result);
             }
         } else {
-            echo "";
-            exit;
+            return new Response('');
         }
     }
 }
