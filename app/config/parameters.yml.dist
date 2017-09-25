@@ -20,3 +20,8 @@ parameters:
 
     token: ~
     encodingAESKey: ~
+
+    # 开发者ID
+    appID: ~
+    # 开发者密码
+    appSecret: ~
