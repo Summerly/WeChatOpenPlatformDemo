@@ -19,9 +19,9 @@ parameters:
     secret: ThisTokenIsNotSoSecretChangeIt
 
     token: ~
-    encodingAESKey: ~
+    encoding_aes_key: ~
 
     # 开发者ID
-    appID: ~
+    app_id: ~
     # 开发者密码
-    appSecret: ~
+    app_secret: ~
