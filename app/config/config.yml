@@ -73,4 +73,11 @@ doctrine_migrations:
     namespace: Application\Migrations
     table_name: migration_versions
     name: Application Migrations
-    organize_migrations: false 
+    organize_migrations: false
+
+stof_doctrine_extensions:
+    orm:
+        default:
+            softdeleteable: true
+            timestampable: true
+            blameable: true
