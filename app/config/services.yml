@@ -33,3 +33,7 @@ services:
     # AppBundle\Service\ExampleService:
     #     arguments:
     #         $someArgument: 'some_value'
+    AppBundle\Manager\AccessTokenManager:
+        arguments:
+            - '%app_id%'
+            - '%app_secret%'
