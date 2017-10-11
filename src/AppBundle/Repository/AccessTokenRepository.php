@@ -12,4 +12,13 @@ use Doctrine\ORM\EntityRepository;
  */
 class AccessTokenRepository extends EntityRepository
 {
+    public function getLatestAccessToken()
+    {
+        return $this->createQueryBuilder('at')
+            ->select('at')
+            ->orderBy('at.id', 'DESC')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
 }

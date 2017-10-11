@@ -3,9 +3,9 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
-use Gedmo\Mapping\Annotation as Gedmo;
 
 /**
  * AccessToken
@@ -108,6 +108,15 @@ class AccessToken
     public function getExpiresIn()
     {
         return $this->expiresIn;
+    }
+
+    public function isExpired()
+    {
+        $createdAt = clone $this->getCreatedAt();
+
+        $expireTime = $createdAt->add(new \DateInterval('PT' . $this->getExpiresIn() . 'S'));
+
+        return $expireTime < new \DateTime('now');
     }
 }
 
